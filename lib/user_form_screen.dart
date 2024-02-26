@@ -27,7 +27,7 @@ class BottomSheetScreen extends StatelessWidget {
                 controller: nameController,
                 decoration: InputDecoration(
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30.0),
+                    borderRadius: BorderRadius.circular(15.0),
                   ),
                 ),
               ),
@@ -40,7 +40,7 @@ class BottomSheetScreen extends StatelessWidget {
                 controller: phoneController,
                 decoration: InputDecoration(
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30.0),
+                    borderRadius: BorderRadius.circular(15.0),
                   ),
                 ),
               ),
@@ -53,7 +53,7 @@ class BottomSheetScreen extends StatelessWidget {
                 controller: emailController,
                 decoration: InputDecoration(
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30.0),
+                    borderRadius: BorderRadius.circular(15.0),
                   ),
                 ),
               ),
