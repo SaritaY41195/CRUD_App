@@ -1,5 +1,3 @@
-import 'dart:js_interop_unsafe';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_crud/services/firebase_services.dart';
 import 'package:firebase_crud/user_form_screen.dart';
@@ -14,11 +12,14 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   Stream? usersDetails;
+  TextEditingController nameController = TextEditingController();
+  TextEditingController phoneController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
 
   @override
   void initState() {
-    getUser();
     super.initState();
+    getUser();
   }
 
   getUser() async {
@@ -82,17 +83,17 @@ class _HomeScreenState extends State<HomeScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  item["Name"],
+                                  item['Name'],
                                   style: const TextStyle(
                                       fontSize: 20, color: Colors.black),
                                 ),
                                 Text(
-                                  item["PhoneNumber"],
+                                  item['PhoneNumber'],
                                   style: const TextStyle(
                                       fontSize: 20, color: Colors.black),
                                 ),
                                 Text(
-                                  item["Email"],
+                                  item['Email'],
                                   style: const TextStyle(
                                       fontSize: 20, color: Colors.black),
                                 ),
@@ -101,13 +102,20 @@ class _HomeScreenState extends State<HomeScreen> {
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
                                     IconButton(
-                                        onPressed: () {},
+                                        onPressed: () {
+                                          nameController.text = item['Name'];
+                                          phoneController.text = item['PhoneNumber'];
+                                          emailController.text = item['Email'];
+                                          editUserDetail(item['Id']);
+                                        },
                                         icon: const Icon(
                                           Icons.edit,
                                           color: Colors.black,
                                         )),
                                     IconButton(
-                                        onPressed: () {},
+                                        onPressed: () {
+                                          FirebaseServices.deleteData(item['Id']);
+                                        },
                                         icon: const Icon(
                                           Icons.delete,
                                           color: Colors.black,
@@ -122,11 +130,116 @@ class _HomeScreenState extends State<HomeScreen> {
                     },
                   ),
                 )
-              : Container(
-                  child: const Text("No data found."),
-                );
+              : Container(child: const Center(child: Text("No data found.")));
         });
   }
 
-
+  Future editUserDetail(String id) => showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Edit details'),
+          icon: IconButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              icon: const Icon(Icons.cancel_outlined)),
+          content: Container(
+            height: 500,
+            width: MediaQuery.sizeOf(context).width,
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text(
+                    'Name',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Container(
+                    child: TextField(
+                      controller: nameController,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15.0),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  const Text(
+                    'Phone Number',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Container(
+                    child: TextField(
+                      controller: phoneController,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15.0),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  const Text(
+                    'Email Id',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Container(
+                    child: TextField(
+                      controller: emailController,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15.0),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Center(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Map<String, dynamic> updateInfo ={
+                          'Id': id,
+                          'Name' : nameController.text.toString(),
+                          'PhoneNumber': phoneController.text.toString(),
+                          'Email': emailController.text.toString(),
+                        };
+                        FirebaseServices.updateUserDetail(id, updateInfo).then((value) {
+                          Navigator.of(context).pop();
+                          ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                  content: Text("update data successfully")));
+                        });
+                      },
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.orange),
+                      child: const Text(
+                        'Edit',
+                        style: TextStyle(color: Colors.black),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      });
 }

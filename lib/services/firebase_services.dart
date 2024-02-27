@@ -11,4 +11,12 @@ class FirebaseServices {
   static Future getAllUsers() async{
     return await FirebaseFirestore.instance.collection('users').snapshots();
   }
+
+  static Future updateUserDetail(String id, Map<String, dynamic> updateInfo) async{
+    return await FirebaseFirestore.instance.collection('users').doc(id).update(updateInfo);
+  }
+
+  static Future deleteData(String id) async{
+    return await FirebaseFirestore.instance.collection('users').doc(id).delete();
+  }
 }
